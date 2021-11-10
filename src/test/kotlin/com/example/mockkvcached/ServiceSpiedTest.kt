@@ -25,7 +25,7 @@ class ServiceCachedSpiedTest(
 }
 
 @Configuration
-class InjectSpiesConfiguration{
+class InjectSpiesConfiguration {
     @Bean
     @Primary
     fun spiedService(service: Service): Service {
@@ -33,11 +33,11 @@ class InjectSpiesConfiguration{
     }
 
     // workaround 2: use unwrapped beans to spy
-    @Bean
-    @Primary
-    fun spiedUnwrappedService(service: Service): Service {
-        val actualService: Service = AopTestUtils.getUltimateTargetObject(service)
-        val spyk = spyk(actualService)
-        return spyk
-    }
+//    @Bean
+//    @Primary
+//    fun spiedUnwrappedService(service: Service): Service {
+//        val actualService: Service = AopTestUtils.getUltimateTargetObject(service)
+//        val spyk = spyk(actualService)
+//        return spyk
+//    }
 }
