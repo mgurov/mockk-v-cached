@@ -38,6 +38,24 @@ class CustomProxyTest {
         unroll(spyked)
     }
 
+    @Test
+    fun addTwoSpykes() {
+        val toProxy = Service()
+
+        val proxied = proxy(toProxy)
+
+        val spyked = spyk(proxied)
+
+        val spykeProxied = proxy(spyked)
+
+        every { spykeProxied.respondCached("empty") } returns ""
+
+        assertThat(spykeProxied.respondCached("what is the meaning of life?")).startsWith("42 42 what")
+        assertThat(spykeProxied.respondCached("empty")).startsWith("")
+
+        unroll(spykeProxied)
+    }
+
     private fun unroll(source: Any) {
         var nextStep = source
         while (true) {
@@ -55,7 +73,7 @@ class CustomProxyTest {
     }
 
 
-    private fun proxy(toProxy: Service): ServiceInterface {
+    private fun proxy(toProxy: ServiceInterface): ServiceInterface {
         val proxied = Proxy.newProxyInstance(
             this.javaClass.classLoader,
             arrayOf(ServiceInterface::class.java),
