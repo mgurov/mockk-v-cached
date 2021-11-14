@@ -1,6 +1,5 @@
 package com.example.mockkvcached
 
-import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
@@ -28,14 +27,10 @@ class MockkSpykingTest(
 @SpringBootTest
 class DependentServiceTest(
     @Autowired val dependentService: DependentService,
+    @Autowired val service: Service,
 ) {
-
-    @MockkBean
-    private lateinit var service: Service
-
     @Test
     fun `should work nicely by default`() {
-        every { service.respond("blah") } returns "blah_1234"
         assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
     }
 
