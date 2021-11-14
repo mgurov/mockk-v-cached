@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.aop.TargetSource
+import org.springframework.aop.framework.Advised
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -29,7 +30,26 @@ class CustomProxyTest {
         val spyked = spyk(proxied)
 
         assertThat(spyked.respondCached("what is the meaning of life?")).startsWith("42 what")
+
+        unroll(spyked)
     }
+
+    private fun unroll(source: Any) {
+        var nextStep = source
+        while (true) {
+
+            val targetSource = when (nextStep) {
+                is MyServiceAdviced -> {
+                    println("Unadvising $nextStep")
+                    nextStep.getTargetSource()
+                }
+                else -> break
+            }
+
+            nextStep = targetSource.target!!
+        }
+    }
+
 
     private fun proxy(toProxy: Service): ServiceInterface {
         val proxied = Proxy.newProxyInstance(
