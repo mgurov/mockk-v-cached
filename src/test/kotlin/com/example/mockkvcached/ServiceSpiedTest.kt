@@ -1,6 +1,6 @@
 package com.example.mockkvcached
 
-import io.mockk.clearMocks
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.spyk
 import org.assertj.core.api.SoftAssertions
@@ -18,10 +18,9 @@ class MockkSpykingTest(
     @Autowired private val spiedService: Service
 ) {
 
-
     @BeforeEach
-    fun `cleanupResetMocks`() {
-        clearMocks(spiedService)
+    fun `resetMocks`() {
+        clearAllMocks()
     }
 
     @Test
@@ -29,13 +28,7 @@ class MockkSpykingTest(
 
         every { spiedService.respondCached("empty") } returns ""
 
-        val firstUnwrap = (spiedService as Advised).targetSource.target
-        val secondUnwrap = (firstUnwrap as Advised).targetSource.target
-
-        SoftAssertions.assertSoftly {
-            it.assertThat(secondUnwrap).isNotInstanceOf(Advised::class.java)
-            it.assertThat(secondUnwrap).isInstanceOf(Service::class.java)
-        }
+        getTargetTwice()
 
     }
 
@@ -44,6 +37,10 @@ class MockkSpykingTest(
 
         //every { spiedService.respondCached("empty") } returns ""
 
+        getTargetTwice()
+    }
+
+    private fun getTargetTwice() {
         val firstUnwrap = (spiedService as Advised).targetSource.target
         val secondUnwrap = (firstUnwrap as Advised).targetSource.target
 
@@ -87,7 +84,7 @@ class InjectSpiesConfiguration {
     // workaround: use unwrapped beans to spy
 //    @Bean
 //    @Primary
-//    fun spiedUnwrappedService(service: Service): Service {
+//    fun spiedService(service: Service): Service {
 //        val actualService: Service = AopTestUtils.getUltimateTargetObject(service)
 //        val spyk = spyk(actualService)
 //        return spyk
