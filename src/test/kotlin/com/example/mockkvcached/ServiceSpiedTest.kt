@@ -39,12 +39,12 @@ class DependentServiceTest(
 
 }
 
-@Configuration
-class InjectSpiesConfiguration {
-    @Bean
-    @Primary
-    fun spiedService(service: Service): Service {
-        val spyk = spyk(service)
-        return spyk
-    }
-}
+//@Configuration
+//class InjectSpiesConfiguration {
+//    @Bean
+//    @Primary
+//    fun spiedService(service: Service): Service {
+//        val spyk = spyk(service)
+//        return spyk
+//    }
+//}
