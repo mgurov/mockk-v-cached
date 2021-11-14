@@ -20,10 +20,9 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
-		exclude(module = "mockito-core") // workaround 1: no problem with mockito excluded
+		exclude(module = "mockito-core")
 	}
 	testImplementation("io.mockk:mockk:1.12.0")
-	testImplementation("cglib:cglib:3.2.4")
 }
 
 tasks.withType<KotlinCompile> {

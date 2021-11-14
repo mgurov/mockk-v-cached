@@ -30,17 +30,6 @@ class MockkSpykingTest(
     @Autowired private val spiedService: Service
 ) {
     @Test
-    fun `should be able to invoke Target`() {
-
-        every { spiedService.respondCached("empty") } returns ""
-
-        //AopTestUtils.getUltimateTargetObject<Any>(spiedService)
-
-        unroll(spiedService)
-
-    }
-
-    @Test
     fun `should be able to invoke Target directly`() {
 
         every { spiedService.respondCached("empty") } returns ""
