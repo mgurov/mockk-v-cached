@@ -2,10 +2,14 @@ package com.example.mockkvcached
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import java.util.*
 
 @SpringBootTest
@@ -45,12 +49,22 @@ class DependentServiceTest(
 
 }
 
-//@Configuration
-//class InjectSpiesConfiguration {
-//    @Bean
-//    @Primary
-//    fun spiedService(service: Service): Service {
-//        val spyk = spyk(service)
-//        return spyk
-//    }
-//}
+@Configuration
+class InjectSpiesConfiguration {
+    @Bean
+    @Primary
+    fun spiedService(service: Service): Service {
+        return spyk(service)
+    }
+}
+
+
+@SpringBootTest
+class CountServices(
+    @Autowired val services: List<Service>,
+) {
+    @Test
+    fun `should have 2wo instances of Service - one original and one mocked`() {
+        assertThat(services).hasSize(2)
+    }
+}
