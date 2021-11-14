@@ -2,15 +2,12 @@ package com.example.mockkvcached
 
 import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.Test
-import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.test.util.AopTestUtils
 import java.util.*
 
 @SpringBootTest
@@ -28,11 +25,11 @@ class MockkSpykingTest(
 
 @SpringBootTest
 class DependentServiceTest(
-    val dependentService: DependentService,
+    @Autowired val dependentService: DependentService,
 ) {
     @Test
     fun `shall handle explosions nicely`() {
-        assertThat(dependentService.doubleRespond("blah")).matches("blah _(\\d+) v blah _(\\d+)")
+        assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
     }
 }
 
