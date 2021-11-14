@@ -9,3 +9,10 @@ class Service(
 ) {
     fun respond(input: String) = prefix + input + "_" + Instant.now().toEpochMilli()
 }
+
+@Component
+class DependentService(
+    val service: Service,
+) {
+    fun doubleRespond(input: String) = service.respond(input) + " v " + service.respond(input)
+}
