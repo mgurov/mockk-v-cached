@@ -14,13 +14,18 @@ class CustomProxyTest {
     fun shallProxyCustomly() {
         val toProxy = Service()
 
+        val proxied = proxy(toProxy)
+
+        assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 what")
+    }
+
+    private fun proxy(toProxy: Service): ServiceInterface {
         val proxied = Proxy.newProxyInstance(
             this.javaClass.classLoader,
             arrayOf(ServiceInterface::class.java),
             DynamicInvocationHandler(toProxy)
         ) as ServiceInterface
-
-        assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 what")
+        return proxied
     }
 
 }
