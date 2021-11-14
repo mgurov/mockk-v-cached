@@ -23,6 +23,7 @@ dependencies {
 		exclude(module = "mockito-core") // workaround 1: no problem with mockito excluded
 	}
 	testImplementation("io.mockk:mockk:1.12.0")
+	testImplementation("cglib:cglib:3.2.4")
 }
 
 tasks.withType<KotlinCompile> {
