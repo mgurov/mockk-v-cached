@@ -1,5 +1,6 @@
 package com.example.mockkvcached
 
+import io.mockk.spyk
 import net.sf.cglib.proxy.Enhancer
 import net.sf.cglib.proxy.MethodInterceptor
 import org.assertj.core.api.Assertions.assertThat
@@ -15,6 +16,17 @@ class CustomCglibProxyTest {
         val proxied = MyCglibEnhancer(toProxy).proxy()
 
         assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 who what")
+    }
+
+    @Test
+    fun oneLevelOfSpykeness() {
+        val toProxy = Service(prefix = "who ")
+
+        val proxied = MyCglibEnhancer(toProxy).proxy()
+
+        val spyked = spyk(proxied)
+
+        assertThat(spyked.respondCached("what is the meaning of life?")).startsWith("42 who what")
     }
 
 
