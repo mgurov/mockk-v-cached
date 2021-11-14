@@ -11,7 +11,6 @@ import java.lang.reflect.Proxy
 
 class CustomProxyTest {
 
-
     @Test
     fun shallProxyCustomly() {
         val toProxy = Service()
@@ -43,9 +42,13 @@ class CustomProxyTest {
 
 }
 
+interface MyServiceAdviced {
+    fun getTargetSource(): MyTargetSource
+}
+
 class DynamicInvocationHandler(
     proxied: ServiceInterface
-) : InvocationHandler {
+) : InvocationHandler, MyServiceAdviced {
 
     private val myTargetSource = MyTargetSource(proxied)
 
@@ -58,6 +61,10 @@ class DynamicInvocationHandler(
         private val LOGGER = LoggerFactory.getLogger(
             DynamicInvocationHandler::class.java
         )
+    }
+
+    override fun getTargetSource(): MyTargetSource {
+        return myTargetSource
     }
 }
 
