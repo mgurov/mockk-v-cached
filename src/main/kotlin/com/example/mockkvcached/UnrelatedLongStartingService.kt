@@ -1,6 +1,5 @@
 package com.example.mockkvcached
 
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
@@ -13,6 +12,6 @@ class UnrelatedLongStartingService {
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(UnrelatedLongStartingService::class.java)
+        private val logger = logger()
     }
 }
