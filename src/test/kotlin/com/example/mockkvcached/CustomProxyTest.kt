@@ -1,5 +1,6 @@
 package com.example.mockkvcached
 
+import io.mockk.every
 import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -29,7 +30,10 @@ class CustomProxyTest {
 
         val spyked = spyk(proxied)
 
+        every { spyked.respondCached("empty") } returns ""
+
         assertThat(spyked.respondCached("what is the meaning of life?")).startsWith("42 what")
+        assertThat(spyked.respondCached("empty")).startsWith("")
 
         unroll(spyked)
     }
