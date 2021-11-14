@@ -10,11 +10,11 @@ class CustomCglibProxyTest {
 
     @Test
     fun shallProxyCustomly() {
-        val toProxy = Service()
+        val toProxy = Service(prefix = "who ")
 
-        val proxied = proxy(toProxy)
+        val proxied =  proxy(toProxy)
 
-        assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 what")
+        assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 who what")
     }
 
     private fun proxy(toProxy: Service): Service {

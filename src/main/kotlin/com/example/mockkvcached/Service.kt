@@ -10,9 +10,11 @@ interface ServiceInterface {
 }
 
 @Component
-class Service: ServiceInterface {
+class Service(
+    val prefix: String = ""
+): ServiceInterface {
 
     @Cacheable("response_cache")
-    override fun respondCached(input: String) = input + "_" + Instant.now().toEpochMilli()
+    override fun respondCached(input: String) = prefix + input + "_" + Instant.now().toEpochMilli()
 
 }
