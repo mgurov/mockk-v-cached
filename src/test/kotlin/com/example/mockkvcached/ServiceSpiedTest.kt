@@ -3,6 +3,7 @@ package com.example.mockkvcached
 import io.mockk.every
 import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatNoException
 import org.junit.jupiter.api.Test
 import org.springframework.aop.framework.Advised
 import org.springframework.aop.support.AopUtils
@@ -37,7 +38,22 @@ class MockkSpykingTest(
 
         //AopTestUtils.getUltimateTargetObject<Any>(spiedService)
 
-        (spiedService as Advised).targetSource.target
+        var nextStep: Any = spiedService
+
+        while (true) {
+
+            val targetSource = when(nextStep) {
+                is Advised -> {
+                    println("Unadvising $nextStep")
+                    nextStep.targetSource
+                }
+                else -> break
+            }
+
+            nextStep = targetSource.target!!
+        }
+
+
     }
 }
 

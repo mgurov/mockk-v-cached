@@ -20,7 +20,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
-		//exclude(module = "mockito-core") // workaround 1: no problem with mockito excluded
+		exclude(module = "mockito-core") // workaround 1: no problem with mockito excluded
 	}
 	testImplementation("io.mockk:mockk:1.12.0")
 }
