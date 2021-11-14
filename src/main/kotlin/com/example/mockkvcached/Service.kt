@@ -4,10 +4,15 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import java.time.Instant
 
+
+interface ServiceInterface {
+    fun respondCached(input: String): String
+}
+
 @Component
-class Service {
+class Service: ServiceInterface {
 
     @Cacheable("response_cache")
-    fun respondCached(input: String) = input + "_" + Instant.now().toEpochMilli()
+    override fun respondCached(input: String) = input + "_" + Instant.now().toEpochMilli()
 
 }
