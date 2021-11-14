@@ -1,13 +1,11 @@
 package com.example.mockkvcached
 
-import io.mockk.spyk
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import java.util.*
 
 @SpringBootTest
@@ -27,14 +25,22 @@ class MockkSpykingTest(
 class DependentServiceTest(
     @Autowired val dependentService: DependentService,
 ) {
+
+    @MockkBean
+    private lateinit var service: Service
+
     @Test
     fun `should work nicely by default`() {
+        every { service.respond("blah") } returns "blah_1234"
         assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
     }
 
     @Test
     fun `shall handle explosions nicely`() {
-        assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
+
+        every { service.respond("blah") } returns "blah_something" andThenThrows IllegalStateException("kaboom")
+
+        assertThat(dependentService.doubleRespond("blah")).matches("blah_something v exploded")
     }
 
 }
