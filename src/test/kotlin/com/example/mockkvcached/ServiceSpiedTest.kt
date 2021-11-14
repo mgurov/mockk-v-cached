@@ -24,7 +24,7 @@ class MockkSpykingTest(
     @BeforeEach
     fun `reset mocks`() {
         //NB: no failures when the following line is commented.
-        every { spiedService.respondCached("empty") } returns ""
+        every { spiedService.respond("empty") } returns ""
     }
 
     @Test
