@@ -65,7 +65,6 @@ class InjectSpiesConfiguration {
     @Primary
     fun spiedService(service: Service): Service {
         val spyk = spyk(service)
-        println("wrapping to $spyk")
         return spyk
     }
 }
