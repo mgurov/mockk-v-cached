@@ -1,5 +1,6 @@
 package com.example.mockkvcached
 
+import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -18,6 +19,17 @@ class CustomProxyTest {
         val proxied = proxy(toProxy)
 
         assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 what")
+    }
+
+    @Test
+    fun addOneSpyke() {
+        val toProxy = Service()
+
+        val proxied = proxy(toProxy)
+
+        val spyked = spyk(proxied)
+
+        assertThat(spyked.respondCached("what is the meaning of life?")).startsWith("42 what")
     }
 
     private fun proxy(toProxy: Service): ServiceInterface {
