@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.test.util.AopTestUtils
 
 @SpringBootTest
 class MockkSpykingTest(
@@ -50,26 +51,13 @@ class MockkSpykingTest(
         }
     }
 
-}
-
-private fun unroll(source: Any) {
-    var nextStep = source
-    while (true) {
-
-        val targetSource = when (nextStep) {
-            is Advised -> {
-                println("Unadvising $nextStep")
-                nextStep.targetSource
-            }
-            else -> break
-        }
-
-        nextStep = targetSource.target!!
+    @Test
+    fun `this is the call that fails for spring mockito ResetMocksTestExecutionListener`() {
+        every { spiedService.respondCached("empty") } returns ""
+        AopTestUtils.getUltimateTargetObject<Any>(spiedService)
     }
 
-    println("Unwrapped to $nextStep")
 }
-
 
 @Configuration
 class InjectSpiesConfiguration {
@@ -80,13 +68,4 @@ class InjectSpiesConfiguration {
         println("wrapping to $spyk")
         return spyk
     }
-
-    // workaround: use unwrapped beans to spy
-//    @Bean
-//    @Primary
-//    fun spiedService(service: Service): Service {
-//        val actualService: Service = AopTestUtils.getUltimateTargetObject(service)
-//        val spyk = spyk(actualService)
-//        return spyk
-//    }
 }
