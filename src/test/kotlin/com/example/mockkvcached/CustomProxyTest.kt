@@ -3,6 +3,7 @@ package com.example.mockkvcached
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import org.springframework.aop.TargetSource
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -31,16 +32,39 @@ class CustomProxyTest {
 }
 
 class DynamicInvocationHandler(
-    val proxied: ServiceInterface
+    proxied: ServiceInterface
 ) : InvocationHandler {
+
+    private val myTargetSource = MyTargetSource(proxied)
+
     override operator fun invoke(proxy: Any?, method: Method, args: Array<Any?>): Any {
         LOGGER.info("Invoked method: {} with params {}", method.getName(), args)
-        return "42 " + method.invoke(proxied, *args)
+        return "42 " + method.invoke(myTargetSource.target, *args)
     }
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(
             DynamicInvocationHandler::class.java
         )
+    }
+}
+
+class MyTargetSource(
+    val target: ServiceInterface
+) : TargetSource {
+    override fun getTargetClass(): Class<*>? {
+        return target.javaClass::class.java
+    }
+
+    override fun isStatic(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTarget(): Any? {
+        return target
+    }
+
+    override fun releaseTarget(target: Any) {
+        TODO("Not yet implemented")
     }
 }
