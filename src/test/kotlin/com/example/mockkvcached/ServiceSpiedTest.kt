@@ -40,29 +40,39 @@ class MockkSpykingTest(
 
         var nextStep: Any = spiedService
 
-        while (true) {
-
-            val targetSource = when(nextStep) {
-                is Advised -> {
-                    println("Unadvising $nextStep")
-                    nextStep.targetSource
-                }
-                else -> break
-            }
-
-            nextStep = targetSource.target!!
-        }
-
+        unroll(nextStep)
 
     }
+
 }
+
+private fun unroll(nextStep: Any) {
+    var nextStep1 = nextStep
+    while (true) {
+
+        val targetSource = when (nextStep1) {
+            is Advised -> {
+                println("Unadvising $nextStep1")
+                nextStep1.targetSource
+            }
+            else -> break
+        }
+
+        nextStep1 = targetSource.target!!
+    }
+}
+
 
 @Configuration
 class InjectSpiesConfiguration {
     @Bean
     @Primary
     fun spiedService(service: Service): Service {
-        return spyk(service)
+        unroll(service)
+        val spyk = spyk(service)
+        println("wrapping to $spyk")
+        unroll(spyk)
+        return spyk
     }
 
     // workaround 2: use unwrapped beans to spy
