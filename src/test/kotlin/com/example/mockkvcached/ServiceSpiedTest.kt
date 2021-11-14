@@ -35,9 +35,7 @@ class MockkSpykingTest(
 
         //AopTestUtils.getUltimateTargetObject<Any>(spiedService)
 
-        var nextStep: Any = spiedService
-
-        unroll(nextStep)
+        unroll(spiedService)
 
     }
 
@@ -68,6 +66,8 @@ class InjectSpiesConfiguration {
         unroll(service)
         val spyk = spyk(service)
         println("wrapping to $spyk")
+        //spyk.respondCached("what's the meaning of life")
+        //every { spyk.respondCached("empty") } returns ""
         unroll(spyk)
         return spyk
     }
