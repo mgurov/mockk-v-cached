@@ -28,9 +28,15 @@ class DependentServiceTest(
     @Autowired val dependentService: DependentService,
 ) {
     @Test
+    fun `should work nicely by default`() {
+        assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
+    }
+
+    @Test
     fun `shall handle explosions nicely`() {
         assertThat(dependentService.doubleRespond("blah")).matches("blah_(\\d+) v blah_(\\d+)")
     }
+
 }
 
 @Configuration
