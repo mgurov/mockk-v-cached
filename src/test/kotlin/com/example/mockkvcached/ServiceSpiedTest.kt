@@ -1,9 +1,10 @@
 package com.example.mockkvcached
 
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.spyk
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,24 +14,18 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 
 @SpringBootTest
-class ServiceCachedSpiedTest(
-    @Autowired private val service: Service
-) {
-    @Test
-    fun `this fails because cached`() {
-
-        every { service.respondCached("empty") } returns ""
-
-        assertThat(service.respondCached("empty")).isNotNull()
-    }
-}
-
-@SpringBootTest
 class MockkSpykingTest(
     @Autowired private val spiedService: Service
 ) {
+
+
+    @BeforeEach
+    fun `cleanupResetMocks`() {
+        clearMocks(spiedService)
+    }
+
     @Test
-    fun `should be able to invoke Target directly`() {
+    fun `will fail because of spy pre-config`() {
 
         every { spiedService.respondCached("empty") } returns ""
 
@@ -40,9 +35,22 @@ class MockkSpykingTest(
         SoftAssertions.assertSoftly {
             it.assertThat(secondUnwrap).isNotInstanceOf(Advised::class.java)
             it.assertThat(secondUnwrap).isInstanceOf(Service::class.java)
-//            it.assertThat(secondUnwrap).isInstanceOf(Service::class.java)
         }
 
+    }
+
+    @Test
+    fun `won't fail cause no pre-interaction with spy`() {
+
+        //every { spiedService.respondCached("empty") } returns ""
+
+        val firstUnwrap = (spiedService as Advised).targetSource.target
+        val secondUnwrap = (firstUnwrap as Advised).targetSource.target
+
+        SoftAssertions.assertSoftly {
+            it.assertThat(secondUnwrap).isNotInstanceOf(Advised::class.java)
+            it.assertThat(secondUnwrap).isInstanceOf(Service::class.java)
+        }
     }
 
 }
@@ -71,16 +79,12 @@ class InjectSpiesConfiguration {
     @Bean
     @Primary
     fun spiedService(service: Service): Service {
-//        unroll(service)
         val spyk = spyk(service)
         println("wrapping to $spyk")
-        //spyk.respondCached("what's the meaning of life")
-        //every { spyk.respondCached("empty") } returns ""
-//        unroll(spyk)
         return spyk
     }
 
-    // workaround 2: use unwrapped beans to spy
+    // workaround: use unwrapped beans to spy
 //    @Bean
 //    @Primary
 //    fun spiedUnwrappedService(service: Service): Service {
