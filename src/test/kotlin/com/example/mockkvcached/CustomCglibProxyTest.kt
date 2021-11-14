@@ -12,19 +12,30 @@ class CustomCglibProxyTest {
     fun shallProxyCustomly() {
         val toProxy = Service(prefix = "who ")
 
-        val proxied = proxy(toProxy)
+        val proxied = MyCglibEnhancer(toProxy).proxy()
 
         assertThat(proxied.respondCached("what is the meaning of life?")).startsWith("42 who what")
     }
 
-    private fun proxy(toProxy: Service): Service {
+
+}
+
+class MyCglibEnhancer(
+    target: Service
+): MyServiceAdviced {
+    private val myTargetSource = MyTargetSource(target)
+
+    override fun getTargetSource(): MyTargetSource {
+        return myTargetSource
+    }
+
+    fun proxy(): Service {
         val enhancer = Enhancer()
         enhancer.setSuperclass(Service::class.java)
         enhancer.setCallback(MethodInterceptor { obj, method, args, proxy ->
-            "42 " +  toProxy.respondCached(args[0] as String)
+            "42 " +  method.invoke(myTargetSource.target, *args)
         } as MethodInterceptor? )
         val proxy: Service = enhancer.create() as Service
         return proxy
     }
-
 }
