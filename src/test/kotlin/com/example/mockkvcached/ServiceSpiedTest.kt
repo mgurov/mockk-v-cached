@@ -6,10 +6,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import io.mockk.every
 import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
+import org.springframework.boot.test.context.DefaultTestExecutionListenersPostProcessor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.test.util.AopTestUtils
+import org.springframework.test.context.TestExecutionListener
 
 @SpringBootTest
 class ServiceCachedSpiedTest(
@@ -40,4 +41,10 @@ class InjectSpiesConfiguration {
 //        val spyk = spyk(actualService)
 //        return spyk
 //    }
+}
+
+class SuppressMockitoResetMocksTestExecutionListener : DefaultTestExecutionListenersPostProcessor {
+    override fun postProcessDefaultTestExecutionListeners(listeners: Set<Class<out TestExecutionListener>>): Set<Class<out TestExecutionListener>> {
+        return listeners.filter {it != org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener::class.java}.toSet()
+    }
 }
