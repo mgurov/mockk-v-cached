@@ -42,9 +42,3 @@ class InjectSpiesConfiguration {
 //        return spyk
 //    }
 }
-
-class SuppressMockitoResetMocksTestExecutionListener : DefaultTestExecutionListenersPostProcessor {
-    override fun postProcessDefaultTestExecutionListeners(listeners: Set<Class<out TestExecutionListener>>): Set<Class<out TestExecutionListener>> {
-        return listeners.filter {it != org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener::class.java}.toSet()
-    }
-}
